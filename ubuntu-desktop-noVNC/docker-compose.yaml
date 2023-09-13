@@ -1,0 +1,24 @@
+---
+version: '3.1'
+
+services:
+  ubuntu:
+    image: liwanggui/ubuntu-desktop-novnc
+    container_name: ubuntu
+    restart: always
+    environment:
+      - VNCPASSWD=admin123      # 默认 admin123456
+      - ROOT_PASSWORD=root@123  # 默认 root
+    ports:
+      - 2222:22
+      - 6080:6080
+      - 5900:5900
+    volumes:
+      - ./data/Desktop:/root/Desktop
+      - ./data/Documents:/root/Documents
+      - ./data/Downloads:/root/Downloads
+      - ./data/Music:/root/Music
+      - ./data/Pictures:/root/Pictures
+      - ./data/Public:/root/Public
+      - ./data/Templates:/root/Templates
+      - ./data/Videos:/root/Videos
