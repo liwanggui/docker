@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: build ariang & ariang-aria2
 
 env:
   DOCKER: docker.io
@@ -39,11 +39,12 @@ jobs:
       - name: Get alist version
         id: ariang_version
         run: |
-          echo "ariang_version=$(curl -s  https://api.github.com/repos/mayswind/AriaNg/releases/latest | grep tag_name | cut -f4 -d '"')" >> "$GITHUB_ENV"
+          ARIANG_VERSION=$(curl -s  https://api.github.com/repos/mayswind/AriaNg/releases/latest | grep tag_name | cut -f4 -d '"')
+          echo "ariang_version=$ARIANG_VERSION" >> "$GITHUB_OUTPUT"
       - name: Set alist version
         run: |
-          sed -i "s/VERSION=.*/VERSION=${ariang_version}/" ${{ env.IMAGENAME }}/Dockerfile
-          sed -i "s/VERSION=.*/VERSION=${ariang_version}/" ${{ env.IMAGENAME }}/Dockerfile-aria2
+          sed -i "s/VERSION=.*/VERSION=${{ steps.ariang_version.outputs.ariang_version }}/" ${{ env.IMAGENAME }}/Dockerfile
+          sed -i "s/VERSION=.*/VERSION=${{ steps.ariang_version.outputs.ariang_version }}/" ${{ env.IMAGENAME }}/Dockerfile-aria2
           
       - name: Build and push ${{ env.IMAGENAME }}
         uses: docker/build-push-action@v5
@@ -53,7 +54,7 @@ jobs:
           push: true
           tags: |
             ${{ env.DOCKER }}/liwanggui/${{ env.IMAGENAME }}:latest
-            ${{ env.DOCKER }}/liwanggui/${{ env.IMAGENAME }}:${ariang_version}
+            ${{ env.DOCKER }}/liwanggui/${{ env.IMAGENAME }}:${{ steps.ariang_version.outputs.ariang_version }}
 
       - name: Build and push ${{ env.IMAGENAME }}-aria2
         uses: docker/build-push-action@v5
@@ -64,4 +65,4 @@ jobs:
           push: true
           tags: |
             ${{ env.DOCKER }}/liwanggui/${{ env.IMAGENAME }}-aria2:latest
-            ${{ env.DOCKER }}/liwanggui/${{ env.IMAGENAME }}-aria2:${ariang_version}
+            ${{ env.DOCKER }}/liwanggui/${{ env.IMAGENAME }}-aria2:${{ steps.ariang_version.outputs.ariang_version }}

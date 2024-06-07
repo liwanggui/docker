@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: build alist
 
 env:
   DOCKER: docker.io
@@ -39,10 +39,11 @@ jobs:
       - name: Get alist version
         id: alist_version
         run: |
-          echo "alist_version=$(curl -s  https://api.github.com/repos/alist-org/alist/releases/latest | grep tag_name | cut -f4 -d '"')" >> "$GITHUB_ENV"
+          alist_version=$(curl -s  https://api.github.com/repos/alist-org/alist/releases/latest | grep tag_name | cut -f4 -d '"')
+          echo "alist_version=$alist_version" >> "$GITHUB_OUTPUT"
       - name: Set alist version
         run: |
-          sed -i "s/VERSION=.*/VERSION=${alist_version}/" ${{ env.IMAGENAME }}/Dockerfile
+          sed -i "s/VERSION=.*/VERSION=${{ steps.alist_version.outputs.alist_version }}/" ${{ env.IMAGENAME }}/Dockerfile
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
@@ -51,4 +52,4 @@ jobs:
           push: true
           tags: |
             ${{ env.DOCKER }}/liwanggui/${{ env.IMAGENAME }}:latest
-            ${{ env.DOCKER }}/liwanggui/${{ env.IMAGENAME }}:${alist_version}
+            ${{ env.DOCKER }}/liwanggui/${{ env.IMAGENAME }}:${{ steps.alist_version.outputs.alist_version }}
