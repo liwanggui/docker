@@ -3,7 +3,7 @@ FROM ubuntu:22.04
 LABEL author="liwanggui"
 LABEL email="liwanggui@163.com"
 
-ARG GHPROXY=https://gh.wglee.org/
+ARG GHPROXY
 ARG TIGERVNC_VERSION=1.13.1 
 ARG NOVNC_VERSION=1.4.0
 ARG ROOT_PASSWORD=root

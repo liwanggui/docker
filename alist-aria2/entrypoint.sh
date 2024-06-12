@@ -1,6 +1,7 @@
 #!/bin/bash
 
-[ -f /root/.aria2/aria2.conf ] ||  cp -rf /opt/aria2 /root/.aria2
+[ -d /root/.aria2 ] || mkdir -p /root/.aria2
+[ -f /root/.aria2/aria2.conf ] ||  cp -rf /opt/aria2/* /root/.aria2
 
 chown -R ${PUID}:${PGID} /opt/alist/
 

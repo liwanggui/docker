@@ -14,11 +14,4 @@ services:
       - 6080:6080
       - 5900:5900
     volumes:
-      - ./data/Desktop:/root/Desktop
-      - ./data/Documents:/root/Documents
-      - ./data/Downloads:/root/Downloads
-      - ./data/Music:/root/Music
-      - ./data/Pictures:/root/Pictures
-      - ./data/Public:/root/Public
-      - ./data/Templates:/root/Templates
-      - ./data/Videos:/root/Videos
+      - ./data:/root
