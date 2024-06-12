@@ -1,0 +1,57 @@
+name: build kube-explorer
+
+env:
+  DOCKER: docker.io
+  IMAGENAME: kube-explorer
+
+on:
+  push:
+    branches: [ "main" ]
+  schedule:
+    - cron: '0 8 1 * *'
+
+jobs:
+  vulerability-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Perform Scan
+        uses: ShiftLeftSecurity/scan-action@master
+        
+  build-and-push:
+    runs-on: ubuntu-latest
+    needs:
+      - vulerability-scan
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.DOCKER }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Get alist version
+        id: explorer_version
+        run: |
+          EXPLORER_VERSION=$(curl -s  https://api.github.com/repos/cnrancher/kube-explorer/releases/latest | grep tag_name | cut -f4 -d '"')
+          echo "explorer_version=$EXPLORER_VERSION" >> "$GITHUB_OUTPUT"
+      - name: Set alist version
+        run: |
+          sed -i "s/VERSION=.*/VERSION=${{ steps.explorer_version.outputs.explorer_version }}/" ${{ env.IMAGENAME }}/Dockerfile
+          sed -i "s/VERSION=.*/version=${{ steps.explorer_version.outputs.explorer_version }}/" ${{ env.IMAGENAME }}/Dockerfile
+
+      - name: Build and push ${{ env.IMAGENAME }}
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ env.IMAGENAME }}
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ${{ env.DOCKER }}/liwanggui/${{ env.IMAGENAME }}:latest
+            ${{ env.DOCKER }}/liwanggui/${{ env.IMAGENAME }}:${{ steps.explorer_version.outputs.explorer_version }}
