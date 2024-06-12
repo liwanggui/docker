@@ -44,7 +44,7 @@ jobs:
       - name: Set alist version
         run: |
           sed -i "s/VERSION=.*/VERSION=${{ steps.explorer_version.outputs.explorer_version }}/" ${{ env.IMAGENAME }}/Dockerfile
-          sed -i "s/VERSION=.*/version=${{ steps.explorer_version.outputs.explorer_version }}/" ${{ env.IMAGENAME }}/Dockerfile
+          sed -i "s/version=.*/version=${{ steps.explorer_version.outputs.explorer_version }}/" ${{ env.IMAGENAME }}/Dockerfile
 
       - name: Build and push ${{ env.IMAGENAME }}
         uses: docker/build-push-action@v5
@@ -52,6 +52,8 @@ jobs:
           context: ${{ env.IMAGENAME }}
           platforms: linux/amd64,linux/arm64
           push: true
+          build-args: |
+            VERSION=${{ steps.explorer_version.outputs.explorer_version }}
           tags: |
             ${{ env.DOCKER }}/liwanggui/${{ env.IMAGENAME }}:latest
             ${{ env.DOCKER }}/liwanggui/${{ env.IMAGENAME }}:${{ steps.explorer_version.outputs.explorer_version }}

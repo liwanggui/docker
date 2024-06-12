@@ -1,7 +1,7 @@
 FROM nginx:stable-alpine
 
 ARG VERSION=1.3.7 
-#ARG GHPROXY=https://gh.wglee.org/
+ARG GHPROXY
 
 # RUN  sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories && \
 RUN  apk add --no-cache curl bash && \

@@ -1,12 +1,12 @@
 FROM  alpine
 
-ARG VERSION="v0.3.2"
+ARG VERSION=v0.4.0
+ARG TARGETARCH
 
-LABEL version="v0.3.2"
 LABEL author="liwanggui"
 
 RUN apk add --no-cache iproute2 curl bash && \
-    curl -sfL https://github.com/cnrancher/kube-explorer/releases/download/$VERSION/kube-explorer-linux-amd64 -o /usr/local/bin/kube-explorer && \
+    curl -fL https://github.com/cnrancher/kube-explorer/releases/download/$VERSION/kube-explorer-linux-${TARGETARCH} -o /usr/local/bin/kube-explorer && \
     chmod +x /usr/local/bin/kube-explorer
 
 EXPOSE 9080 9443
